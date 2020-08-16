@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/thalaivar-subu/golang-app/backend/api/lastday"
 	"github.com/thalaivar-subu/golang-app/backend/api/primenumber"
@@ -24,6 +26,7 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	removeLogFiles()
 	flag.Set("alsologtostderr", "true")
 	flag.Set("log_dir", "./log/")
 	flag.Parse()
@@ -39,4 +42,26 @@ func main() {
 	log.Fatal(http.ListenAndServe(port, router))
 
 	glog.Flush()
+}
+
+func removeLogFiles() {
+	// The target directory.
+	directory := "/opt/golang-app/backend/log/"
+
+	// Open the directory and read all its files.
+	dirRead, _ := os.Open(directory)
+	dirFiles, _ := dirRead.Readdir(0)
+
+	// Loop over the directory's files.
+	for index := range dirFiles {
+		fileHere := dirFiles[index]
+
+		// Get name of file and its full path.
+		nameHere := fileHere.Name()
+		fullPath := directory + nameHere
+
+		// Remove the file.
+		os.Remove(fullPath)
+		fmt.Println("Removed file:", fullPath)
+	}
 }
