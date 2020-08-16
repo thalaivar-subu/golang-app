@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/thalaivar-subu/golang-app/backend/api/lastday"
 	wordcounter "github.com/thalaivar-subu/golang-app/backend/api/wordcounter"
 
 	"github.com/golang/glog"
@@ -30,6 +31,7 @@ func main() {
 	router.HandleFunc("/", healthCheck)
 	api := router.PathPrefix("/api/v1").Subrouter()
 	api.HandleFunc("/wordcounter", wordcounter.Handler).Methods(http.MethodGet)
+	api.HandleFunc("/lastdate", lastday.Handler).Methods(http.MethodPost)
 
 	glog.Info("Server is starting and while listen in " + port)
 	log.Fatal(http.ListenAndServe(port, router))
