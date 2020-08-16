@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/thalaivar-subu/golang-app/backend/api/lastday"
+	"github.com/thalaivar-subu/golang-app/backend/api/primenumber"
 	wordcounter "github.com/thalaivar-subu/golang-app/backend/api/wordcounter"
 
 	"github.com/golang/glog"
@@ -32,6 +33,7 @@ func main() {
 	api := router.PathPrefix("/api/v1").Subrouter()
 	api.HandleFunc("/wordcounter", wordcounter.Handler).Methods(http.MethodGet)
 	api.HandleFunc("/lastdate", lastday.Handler).Methods(http.MethodPost)
+	api.HandleFunc("/primenumber", primenumber.Handler).Methods(http.MethodGet)
 
 	glog.Info("Server is starting and while listen in " + port)
 	log.Fatal(http.ListenAndServe(port, router))
