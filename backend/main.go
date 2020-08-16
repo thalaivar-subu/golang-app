@@ -7,9 +7,12 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/thalaivar-subu/golang-app/backend/api/crud"
 	"github.com/thalaivar-subu/golang-app/backend/api/lastday"
 	"github.com/thalaivar-subu/golang-app/backend/api/primenumber"
 	wordcounter "github.com/thalaivar-subu/golang-app/backend/api/wordcounter"
+	database "github.com/thalaivar-subu/golang-app/backend/database"
+	"github.com/thalaivar-subu/golang-app/backend/helpers"
 
 	"github.com/golang/glog"
 	"github.com/gorilla/mux"
@@ -30,17 +33,17 @@ func main() {
 	flag.Set("alsologtostderr", "true")
 	flag.Set("log_dir", "./log/")
 	flag.Parse()
-
+	db := database.ConnectMysql()
 	router := mux.NewRouter()
 	router.HandleFunc("/", healthCheck)
 	api := router.PathPrefix("/api/v1").Subrouter()
-	api.HandleFunc("/wordcounter", wordcounter.Handler).Methods(http.MethodGet)
-	api.HandleFunc("/lastdate", lastday.Handler).Methods(http.MethodPost)
-	api.HandleFunc("/primenumber", primenumber.Handler).Methods(http.MethodGet)
-
+	api.HandleFunc("/wordcounter", helpers.HandlerWrap(wordcounter.Handler)).Methods(http.MethodGet)
+	api.HandleFunc("/lastdate", helpers.HandlerWrap(lastday.Handler)).Methods(http.MethodPost)
+	api.HandleFunc("/primenumber", helpers.HandlerWrap(primenumber.Handler)).Methods(http.MethodGet)
+	api.HandleFunc("/crud", helpers.HandlerWrapWithDb(crud.Handler, db)).Methods("POST", "GET", "DELETE", "PUT")
 	glog.Info("Server is starting and while listen in " + port)
 	log.Fatal(http.ListenAndServe(port, router))
-
+	defer db.Close()
 	glog.Flush()
 }
 

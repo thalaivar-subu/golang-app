@@ -2,10 +2,7 @@ package lastday
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
-	"time"
 
 	"github.com/golang/glog"
 )
@@ -24,18 +21,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	t, err := time.Parse("2006-01-02", strings.Split(data.Date, "T")[0])
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	year := t.Year()
-	month := t.Month()
-	lastDate := time.Date(year, month+1, 0, 0, 0, 0, 0, t.Location()).Day()
-	dateMap := make(map[string]interface{})
-	dateMap["Date"] = data.Date
-	dateMap["LastDayOfMonth"] = lastDate
-	glog.Info("last day APi response ", dateMap)
+	dateMap := map[string]interface{}{
+		"Date":           data.Date,
+		"LastDayOfMonth": LastDate(data.Date)}
 	responseJSON, err = json.Marshal(dateMap)
 	if err != nil {
 		glog.Info(err)

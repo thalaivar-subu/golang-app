@@ -26,7 +26,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	primeNumbers := make(chan []int)
-	go findPrime(n, primeNumbers)
+	go FindPrime(n, primeNumbers)
 	result := <-primeNumbers
 
 	// Marshal and initialize ResponsJSON
@@ -37,27 +37,4 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(responseJSON))
-}
-
-func findPrime(n int, primeNumbers chan []int) {
-	glog.Info("Go Routine Started for ", n)
-	slice := make([]int, 0)
-	for i := 2; i <= n; i++ {
-		if isPrime(i) {
-			slice = append(slice, i)
-		}
-	}
-	primeNumbers <- slice
-}
-
-func isPrime(n int) bool {
-	if n <= 1 {
-		return false
-	}
-	for i := 2; i < n; i++ {
-		if n%i == 0 {
-			return false
-		}
-	}
-	return true
 }
