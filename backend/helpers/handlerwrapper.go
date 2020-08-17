@@ -13,7 +13,6 @@ import (
 func HandlerWrapWithDb(h types.HandlerWithDb, db *gorm.DB) types.Handler {
 	return func(w http.ResponseWriter, r *http.Request) {
 		requestLogger(r)
-		h(w, r, db)
 		defer func() {
 			if r := recover(); r != nil {
 				glog.Info(r)
@@ -25,13 +24,13 @@ func HandlerWrapWithDb(h types.HandlerWithDb, db *gorm.DB) types.Handler {
 				w.Write(jsonBody)
 			}
 		}()
+		h(w, r, db)
 	}
 }
 
 func HandlerWrap(h types.Handler) types.Handler {
 	return func(w http.ResponseWriter, r *http.Request) {
 		requestLogger(r)
-		h(w, r)
 		defer func() {
 			if r := recover(); r != nil {
 				glog.Info(r)
@@ -43,6 +42,7 @@ func HandlerWrap(h types.Handler) types.Handler {
 				w.Write(jsonBody)
 			}
 		}()
+		h(w, r)
 	}
 }
 

@@ -32,7 +32,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		glog.Info(err)
 	})
 	collyIns.Visit(url)
-	
+
 	responseJSON, err := json.Marshal(wordCountMap)
 	if err != nil {
 		glog.Info(err)
