@@ -23,5 +23,5 @@ type User struct {
 type InsertBody struct {
 	Email string `json:"email"`
 	Name  string `json:"name"`
-	ID    int    `json:"id"`
+	ID    string `json:"id"`
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/rs/cors"
 	"github.com/thalaivar-subu/golang-app/backend/api/crud"
 	"github.com/thalaivar-subu/golang-app/backend/api/excel"
 	"github.com/thalaivar-subu/golang-app/backend/api/lastday"
@@ -43,6 +44,12 @@ func main() {
 	api.HandleFunc("/crud", helpers.HandlerWrapWithDb(crud.Handler, db)).Methods("POST", "GET", "DELETE", "PUT")
 	api.HandleFunc("/excel", helpers.HandlerWrap(excel.Handler)).Methods(http.MethodGet)
 	glog.Info("Server is starting and while listen in " + port)
-	log.Fatal(http.ListenAndServe(port, router))
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowCredentials: true,
+		AllowedMethods:   []string{"GET", "DELETE", "POST", "PUT"},
+	})
+	handler := c.Handler(router)
+	log.Fatal(http.ListenAndServe(port, handler))
 	glog.Flush()
 }

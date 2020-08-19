@@ -1,16 +1,16 @@
 import React from "react";
-import { API_URL } from "..//constants/constants";
-import "./Form.css";
+import { API_URL } from "../constants/constants";
+import "./WordCountForm.css";
 
-class Form extends React.Component {
+class WordCountForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = { value: "", submitted: false, wordJSON: {} };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
-  handleChange(event) {
-    this.setState({ value: event.target.value });
+  handleChange(evt) {
+    this.setState({ [evt.target.name]: evt.target.value });
   }
   async handleSubmit(event) {
     event.preventDefault();
@@ -60,4 +60,4 @@ class Form extends React.Component {
   }
 }
 
-export default Form;
+export default WordCountForm;

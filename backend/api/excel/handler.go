@@ -8,7 +8,7 @@ import (
 	"github.com/golang/glog"
 )
 
-// Handler -> get Url has input -> scrapes words of a site
+// Handler -> Excel names in Columns & Rows
 func Handler(w http.ResponseWriter, r *http.Request) {
 	var responseJSON []byte
 	input := r.URL.Query().Get("s")
