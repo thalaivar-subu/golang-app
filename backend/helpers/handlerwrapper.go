@@ -13,6 +13,7 @@ import (
 func HandlerWrapWithDb(h types.HandlerWithDb, db *gorm.DB) types.Handler {
 	return func(w http.ResponseWriter, r *http.Request) {
 		requestLogger(r)
+		EnableCors(&w)
 		defer func() {
 			if r := recover(); r != nil {
 				glog.Info(r)
@@ -31,6 +32,7 @@ func HandlerWrapWithDb(h types.HandlerWithDb, db *gorm.DB) types.Handler {
 func HandlerWrap(h types.Handler) types.Handler {
 	return func(w http.ResponseWriter, r *http.Request) {
 		requestLogger(r)
+		EnableCors(&w)
 		defer func() {
 			if r := recover(); r != nil {
 				glog.Info(r)
