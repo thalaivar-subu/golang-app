@@ -16,6 +16,6 @@ func getEnv() string {
 func getConfig() map[string]string {
 	config := map[string]map[string]string{}
 	config["development"] = map[string]string{
-		"mysql": "root:123456@tcp(127.0.0.1:3306)/crud?charset=utf8&parseTime=True"}
+		"mysql": "subu:123456@tcp(127.0.0.1:3306)/crud?charset=utf8&parseTime=True"}
 	return config[Env]
 }
