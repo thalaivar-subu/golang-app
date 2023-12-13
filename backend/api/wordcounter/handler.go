@@ -8,10 +8,24 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
 	"github.com/golang/glog"
+	"go.opentelemetry.io/otel"
+	metric "go.opentelemetry.io/otel/metric"
+)
+
+var tracer = otel.Tracer("word-counter-controller")
+var meter = otel.Meter("word-counter-controller")
+
+var apiCounter, _ = meter.Int64Counter(
+	"subu.counter",
+	metric.WithDescription("Number of API calls."),
+	metric.WithUnit("{call}"),
 )
 
 // Handler -> get Url has input -> scrapes words of a site
 func Handler(w http.ResponseWriter, r *http.Request) {
+	apiCounter.Add(r.Context(), 1)
+	_, span := tracer.Start(r.Context(), "word-counter")
+	defer span.End()
 	var responseJSON []byte
 	url := r.URL.Query().Get("url")
 	wordCountMap := make(map[string]int, 0)

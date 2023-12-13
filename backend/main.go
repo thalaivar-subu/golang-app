@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"net/http"
@@ -13,6 +14,8 @@ import (
 	wordcounter "github.com/thalaivar-subu/golang-app/backend/api/wordcounter"
 	database "github.com/thalaivar-subu/golang-app/backend/database"
 	"github.com/thalaivar-subu/golang-app/backend/helpers"
+	"github.com/thalaivar-subu/golang-app/backend/opentelemetry"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 
 	"github.com/golang/glog"
 	"github.com/gorilla/mux"
@@ -29,6 +32,9 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// Initializing Tracer And Metrics
+	opentelemetry.SetupOTelSDK(context.Background(), "golang-app", "1.0")
+
 	helpers.RemoveLogFiles()
 	flag.Set("alsologtostderr", "true")
 	flag.Set("log_dir", "./log/")
@@ -36,6 +42,10 @@ func main() {
 	db := database.ConnectMysql()
 	defer db.Close()
 	router := mux.NewRouter()
+
+	// Auto Instrumentation of Go Mux
+	router.Use(otelmux.Middleware("my-server"))
+
 	router.HandleFunc("/", healthCheck)
 	api := router.PathPrefix("/api/v1").Subrouter()
 	api.HandleFunc("/wordcounter", helpers.HandlerWrap(wordcounter.Handler)).Methods(http.MethodGet)
